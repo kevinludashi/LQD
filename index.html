@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝旗单任务发布报销综合系统 v1</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #f5742f;
+            --accent-color: #8063ff;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --text-color: #333;
+            --text-light: #666;
+            --shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            background-color: #e9e9e9;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        button.accent {
+            background-color: var(--accent-color);
+        }
+        
+        button.cleanup {
+            background-color: #ff4757;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f4f4f4;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 4px;
+        }
+        
+        .data-management {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+        }
+        
+        .data-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .data-item {
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            width: calc(33.333% - 15px);
+            position: relative;
+        }
+        
+        .data-item button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            padding: 2px 5px;
+            font-size: 12px;
+        }
+        
+        .data-export-import {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff0f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .edit-mode {
+            background-color: #fff8dc;
+        }
+        
+        .cleanup-section {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fff0f0;
+            border-radius: 5px;
+            border: 1px solid #ffcccc;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .data-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>蓝旗单任务发布报销综合系统 v1</h1>
+            <p>综合管理系统 - 版本 v1.250909.01 </p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="expense">报销单</button>
+            <button class="tab-btn" data-tab="task">蓝旗任务</button>
+            <button class="tab-btn" data-tab="data">基础数据管理</button>
+        </div>
+        
+        <!-- 报销单登记 -->
+        <div id="expense" class="tab-content active">
+            <div class="card">
+                <h2>报销单登记</h2>
+                
+                <form id="expense-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="region">地区</label>
+                            <input type="text" id="region" name="region" placeholder="请输入地区" list="region-list">
+                            <datalist id="region-list"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">时间</label>
+                            <input type="date" id="date" name="date">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="store-name" style="color: var(--secondary-color); font-weight: bold;">店铺名称</label>
+                        <input type="text" id="store-name" name="store-name" placeholder="请输入店铺名称" list="store-list">
+                        <datalist id="store-list"></datalist>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-name">产品简称</label>
+                            <select id="product-name" name="product-name">
+                                <option value="">请选择产品</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-id">产品ID</label>
+                            <input type="text" id="product-id" name="product-id" placeholder="请输入产品ID">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-image">产品图片上传</label>
+                            <input type="file" id="product-image" name="product-image" accept="image/*">
+                            <img id="image-preview" src="" alt="Image Preview" class="image-preview" style="display:none;">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-url">产品图片 URL</label>
+                            <input type="url" id="product-url" name="product-url" placeholder="请输入图片 URL">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="order-id">订单号</label>
+                            <input type="text" id="order-id" name="order-id" placeholder="请输入订单号">
+                        </div>
+                        <div class="form-group">
+                            <label for="delivery-info">收件信息</label>
+                            <input type="text" id="delivery-info" name="delivery-info" placeholder="请输入收件信息">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment">实付款</label>
+                            <input type="number" id="payment" name="payment" step="0.01" placeholder="请输入实付款">
+                        </div>
+                        <div class="form-group">
+                            <label for="commission">佣金</label>
+                            <input type="number" id="commission" name="commission" step="0.01" placeholder="请输入佣金">
+                        </div>
+                        <div class="form-group">
+                            <label for="principal-commission">本金佣金</label>
+                            <input type="number" id="principal-commission" name="principal-commission" step="0.01" readonly>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit">添加明细</button>
+                        <button type="button" id="download-card">下载卡片</button>
+                        <button type="button" id="export-data">导出数据</button>
+                        <button type="button" id="import-data">导入数据</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2 id="order-summary-title">订单明细列表</h2>
+                <table id="expense-table">
+                    <thead>
+                        <tr>
+                            <th>地区</th>
+                            <th>时间</th>
+                            <th>店铺名称</th>
+                            <th>产品简称</th>
+                            <th>产品ID</th>
+                            <th>产品图片</th>
+                            <th>订单号</th>
+                            <th>收件信息</th>
+                            <th>实付款</th>
+                            <th>佣金</th>
+                            <th>本佣合计</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                
+                <div class="summary">
+                    <h3>店铺明细</h3>
+                    <p id="store-summary"></p>
+                </div>
+                
+                <div class="summary" style="background-color: #fff8f0;">
+                    <p style="font-size: 18px; font-weight: bold; color: black;">本次需要（返款/报销）的总金额</p>
+                    <p id="remark-text" style="font-size: 24px; color: var(--secondary-color); font-weight: bold;"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 任务发布 -->
+        <div id="task" class="tab-content">
+            <div class="card">
+                <h2>蓝旗单任务发布</h2>
+                
+                <div id="publish-areas-container">
+                    <div class="publish-area" id="publish-area-1">
+                        <form id="task-form-1" action="#" method="post" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="release-date-1">发布日期：</label>
+                                    <input type="date" id="release-date-1" name="release-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="store-name-1">店铺名称：</label>
+                                    <input type="text" id="store-name-1" name="store-name" list="store-list-task" required>
+                                    <datalist id="store-list-task"></datalist>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="product-image-1">商品图片上传：</label>
+                                    <input type="file" id="product-image-1" name="product-image" accept="image/*" onchange="previewImage(event, 1)">
+                                    <img id="image-preview-1" class="image-preview" src="" alt="商品图片预览" style="display:none;">
+                                </div>
+                                <div class="form-group">
+                                    <label for="shared-product-image-1">或选择已上传的图片：</label>
+                                    <select id="shared-product-image-1" name="shared-product-image" onchange="selectSharedImage(this, 1)">
+                                        <option value="">请选择图片</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="order-count-1">发布几单：</label>
+                                <input type="number" id="order-count-1" name="order-count" min="1" max="100" required onchange="generateFields(1)">
+                            </div>
+                            
+                            <div class="form-group" id="keywords-group-1">
+                                <label>每一单搜索的关键词：</label>
+                            </div>
+                            
+                            <div class="form-group" id="consultation-group-1">
+                                <label>每一单需要咨询的问题：</label>
+                            </div>
+                            
+                            <div class="form-group" id="sku-name-group-1">
+                                <label>每一单需要下单的SKU名称：</label>
+                            </div>
+                            
+                            <div class="form-group" id="sku-price-group-1">
+                                <label>每一单SKU的单价：</label>
+                            </div>
+                            
+                            <div class="form-group" id="quantity-group-1">
+                                <label>每一单需要拍多少件：</label>
+                            </div>
+                            
+                            <div class="form-group" id="payment-amount-group-1">
+                                <label>每一单实际付款金额：</label>
+                            </div>
+                            
+                            <div class="form-group" id="task-time-group-1">
+                                <label>每一单做任务时间：</label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="task-requirements-1">任务要求：</label>
+                                <textarea id="task-requirements-1" name="task-requirements" rows="5">
+注意：下单全程无截图，货比三家，多看别家和我们链接评价，加入收藏或者购物车（二选一），然后再收藏或者购物车（二选一）下单付款即可！
+                                </textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="secondary" onclick="addPublishArea()">增加发布区域</button>
+                    <button type="button" class="secondary" onclick="removePublishArea()">减少发布区域</button>
+                    <button type="button" class="accent" onclick="submitAllForms()">发布任务</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 基础数据管理 -->
+        <div id="data" class="tab-content">
+            <div class="card">
+                <h2>基础数据管理</h2>
+                <p>在这里管理常用的基础数据，方便在报销单和任务发布中使用。</p>
+                
+                <div class="cleanup-section">
+                    <h3>数据清理工具</h3>
+                    <p>如果您的数据中出现无效或无法删除的项目，可以使用以下工具进行清理：</p>
+                    <button class="cleanup" onclick="cleanupAllData()">清理所有无效数据</button>
+                    <button class="cleanup" onclick="resetAllData()">重置所有数据</button>
+                    <p style="color: #ff4757; font-size: 12px; margin-top: 10px;">警告：重置操作将删除所有数据且无法恢复！</p>
+                </div>
+                
+                <div class="data-management">
+                    <h3>地区管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-region" placeholder="输入新地区">
+                        </div>
+                        <button type="button" onclick="addRegion()">添加地区</button>
+                    </div>
+                    <div class="data-list" id="region-list-container"></div>
+                </div>
+                
+                <div class="data-management">
+                    <h3>店铺管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-store" placeholder="输入新店铺">
+                        </div>
+                        <button type="button" onclick="addStore()">添加店铺</button>
+                    </div>
+                    <div class="data-list" id="store-list-container"></div>
+                </div>
+                
+                <div class="data-management">
+                    <h3>产品管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-product-name" placeholder="产品简称" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="new-product-id" placeholder="产品ID" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="new-product-url" placeholder="产品图片URL">
+                        </div>
+                        <button type="button" onclick="addProduct()">添加产品</button>
+                        <button type="button" onclick="cancelEditProduct()" style="display:none;" id="cancel-edit-product">取消编辑</button>
+                    </div>
+                    <div class="data-list" id="product-list-container"></div>
+                </div>
+                
+                <div class="data-management">
+                    <h3>任务关键词管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-keyword" placeholder="输入新关键词">
+                        </div>
+                        <button type="button" onclick="addKeyword()">添加关键词</button>
+                    </div>
+                    <div class="data-list" id="keyword-list-container"></div>
+                </div>
+                
+                <div class="data-management">
+                    <h3>咨询问题管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-consultation" placeholder="输入新咨询问题">
+                        </div>
+                        <button type="button" onclick="addConsultation()">添加咨询问题</button>
+                    </div>
+                    <div class="data-list" id="consultation-list-container"></div>
+                </div>
+                
+                <div class="data-management">
+                    <h3>SKU名称管理</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="new-sku" placeholder="输入新SKU名称">
+                        </div>
+                        <button type="button" onclick="addSku()">添加SKU名称</button>
+                    </div>
+                    <div class="data-list" id="sku-list-container"></div>
+                </div>
+                
+                <div class="data-export-import">
+                    <h3>数据导入导出</h3>
+                    <div class="button-group">
+                        <button type="button" onclick="exportAllData()">导出所有数据</button>
+                        <button type="button" onclick="importAllData()">导入所有数据</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚版权信息 -->
+    <footer style="
+        text-align: center;
+        padding: 20px;
+        margin-top: 40px;
+        color: #666;
+        border-top: 1px solid #ddd;
+        font-size: 14px;
+        background-color: #f9f9f9;
+    ">
+        网页程序版权归kevin鲁大师所有 未经允许 盗用必究 版本号：v1.250909.01
+    </footer>
+
+    <!-- 引入html2canvas库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        // 初始化数据存储
+        function initStorage() {
+            if (!localStorage.getItem('regions')) localStorage.setItem('regions', JSON.stringify([]));
+            if (!localStorage.getItem('stores')) localStorage.setItem('stores', JSON.stringify([]));
+            if (!localStorage.getItem('products')) localStorage.setItem('products', JSON.stringify([]));
+            if (!localStorage.getItem('task_keywords')) localStorage.setItem('task_keywords', JSON.stringify([]));
+            if (!localStorage.getItem('task_consultations')) localStorage.setItem('task_consultations', JSON.stringify([]));
+            if (!localStorage.getItem('task_skus')) localStorage.setItem('task_skus', JSON.stringify([]));
+            if (!localStorage.getItem('sharedImages')) localStorage.setItem('sharedImages', JSON.stringify([]));
+        }
+
+        // 清理所有无效数据
+        function cleanupAllData() {
+            if (confirm('确定要清理所有无效数据吗？')) {
+                // 清理产品数据
+                let products = JSON.parse(localStorage.getItem('products') || '[]');
+                products = products.filter(product => 
+                    product && product.name && product.name.trim() !== '' && 
+                    product.id && product.id.trim() !== ''
+                );
+                localStorage.setItem('products', JSON.stringify(products));
+                
+                // 清理其他数据
+                const dataTypes = ['regions', 'stores', 'task_keywords', 'task_consultations', 'task_skus'];
+                dataTypes.forEach(type => {
+                    let data = JSON.parse(localStorage.getItem(type) || '[]');
+                    data = data.filter(item => item && item.trim() !== '');
+                    localStorage.setItem(type, JSON.stringify(data));
+                });
+                
+                // 重新加载数据
+                loadAllData();
+                updateDataLists();
+                
+                alert('数据清理完成！');
+            }
+        }
+
+        // 重置所有数据
+        function resetAllData() {
+            if (confirm('警告：这将删除所有数据且无法恢复！确定要继续吗？')) {
+                localStorage.removeItem('regions');
+                localStorage.removeItem('stores');
+                localStorage.removeItem('products');
+                localStorage.removeItem('task_keywords');
+                localStorage.removeItem('task_consultations');
+                localStorage.removeItem('task_skus');
+                localStorage.removeItem('sharedImages');
+                
+                // 重新初始化
+                initStorage();
+                
+                // 重新加载数据
+                loadAllData();
+                updateDataLists();
+                
+                alert('所有数据已重置！');
+            }
+        }
+
+        // 选项卡切换功能
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // 添加active类到当前选项卡
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+                
+                // 如果是任务发布选项卡，更新共享图片下拉菜单
+                if (button.dataset.tab === 'task') {
+                    updateSharedImagesList();
+                }
+            });
+        });
+        
+        // 设置默认日期为当天
+        function setDefaultDate() {
+            const today = new Date().toISOString().substr(0, 10);
+            document.getElementById("date").value = today;
+            document.getElementById("release-date-1").value = today;
+        }
+        
+        // 页面加载时初始化
+        window.onload = function() {
+            initStorage();
+            setDefaultDate();
+            loadAllData();
+            updateDataLists();
+            updateSharedImagesList();
+        };
+        
+        // ============ 报销单功能 ============
+        const expenseForm = document.getElementById("expense-form");
+        const expenseTableBody = document.querySelector("#expense-table tbody");
+        const storeSummary = document.getElementById("store-summary");
+        const productImageInput = document.getElementById("product-image");
+        const productUrlInput = document.getElementById("product-url");
+        const imagePreview = document.getElementById("image-preview");
+        const paymentInput = document.getElementById("payment");
+        const commissionInput = document.getElementById("commission");
+        const principalCommissionInput = document.getElementById("principal-commission");
+        const downloadCardButton = document.getElementById("download-card");
+        const exportDataButton = document.getElementById("export-data");
+        const importDataButton = document.getElementById("import-data");
+        const remarkText = document.getElementById("remark-text");
+        const orderSummaryTitle = document.getElementById("order-summary-title");
+        
+        let storeData = {};  // Store data by store name
+        let expenseItems = []; // 存储所有报销项目
+        let editingIndex = -1; // 当前正在编辑的项目索引
+        
+        // 图片预览功能
+        productImageInput.addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = "block";
+                    productUrlInput.value = "";
+                    
+                    // 保存图片到共享图片库
+                    saveImageToLibrary(e.target.result, "上传图片");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = "none";
+            }
+        });
+        
+        // 图片URL输入功能 - 修改为实时预览
+        productUrlInput.addEventListener("input", function(event) {
+            const url = event.target.value;
+            if (url) {
+                // 清除文件输入
+                productImageInput.value = '';
+                
+                imagePreview.src = url;
+                imagePreview.style.display = "block";
+                
+                // 保存图片到共享图片库
+                saveImageToLibrary(url, "URL图片");
+            } else {
+                imagePreview.style.display = "none";
+            }
+        });
+        
+        // 保存图片到共享图片库
+        function saveImageToLibrary(imageData, namePrefix) {
+            const sharedImages = JSON.parse(localStorage.getItem('sharedImages') || '[]');
+            const timestamp = new Date().getTime();
+            const imageName = `${namePrefix}_${timestamp}`;
+            
+            // 检查是否已存在相同图片
+            const existingIndex = sharedImages.findIndex(img => img.data === imageData);
+            if (existingIndex === -1) {
+                sharedImages.push({
+                    name: imageName,
+                    data: imageData,
+                    timestamp: timestamp
+                });
+                localStorage.setItem('sharedImages', JSON.stringify(sharedImages));
+                updateSharedImagesList();
+            }
+        }
+        
+        // 更新共享图片下拉菜单
+        function updateSharedImagesList() {
+            const sharedImages = JSON.parse(localStorage.getItem('sharedImages') || '[]');
+            
+            // 更新所有发布区域的共享图片下拉菜单
+            for (let i = 1; i <= areaCount; i++) {
+                const selectElement = document.getElementById(`shared-product-image-${i}`);
+                if (selectElement) {
+                    // 保存当前选中的值
+                    const currentValue = selectElement.value;
+                    
+                    // 清空并重新填充选项
+                    selectElement.innerHTML = '<option value="">请选择图片</option>';
+                    
+                    sharedImages.forEach(image => {
+                        const option = document.createElement('option');
+                        option.value = image.data;
+                        option.textContent = image.name;
+                        option.setAttribute('data-image', image.data);
+                        selectElement.appendChild(option);
+                    });
+                    
+                    // 恢复之前选中的值
+                    if (currentValue) {
+                        selectElement.value = currentValue;
+                    }
+                }
+            }
+        }
+        
+        // 选择共享图片 - 修改为实时预览
+        function selectSharedImage(selectElement, areaNumber) {
+            const imageData = selectElement.value;
+            const fileInput = document.getElementById(`product-image-${areaNumber}`);
+            const preview = document.getElementById(`image-preview-${areaNumber}`);
+            
+            if (imageData) {
+                preview.src = imageData;
+                preview.style.display = 'block';
+                
+                // 清除文件输入
+                fileInput.value = '';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // 计算本金佣金
+        function updatePrincipalCommission() {
+            const payment = parseFloat(paymentInput.value) || 0;
+            const commission = parseFloat(commissionInput.value) || 0;
+            const principalCommission = payment + commission;
+            principalCommissionInput.value = principalCommission.toFixed(2);
+        }
+        
+        // 实时计算本金佣金
+        paymentInput.addEventListener("input", updatePrincipalCommission);
+        commissionInput.addEventListener("input", updatePrincipalCommission);
+        
+        // 产品选择变化时自动填充相关信息
+        document.getElementById("product-name").addEventListener("change", function() {
+            const productName = this.value;
+            if (productName) {
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                const product = products.find(p => p.name === productName);
+                if (product) {
+                    document.getElementById("product-id").value = product.id || "";
+                    document.getElementById("product-url").value = product.url || "";
+                    if (product.url) {
+                        imagePreview.src = product.url;
+                        imagePreview.style.display = "block";
+                        
+                        // 清除文件输入
+                        productImageInput.value = '';
+                        
+                        // 保存图片到共享图片库
+                        saveImageToLibrary(product.url, product.name);
+                    }
+                }
+            }
+        });
+        
+        expenseForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+        
+            // 获取表单数据
+            const region = document.getElementById("region").value;
+            const date = document.getElementById("date").value;
+            const storeName = document.getElementById("store-name").value;
+            const productName = document.getElementById("product-name").value;
+            const productId = document.getElementById("product-id").value;
+            const productImage = imagePreview.src;
+            const productUrl = productUrlInput.value;
+            const orderId = document.getElementById("order-id").value;
+            const deliveryInfo = document.getElementById("delivery-info").value;
+            const payment = parseFloat(document.getElementById("payment").value) || 0;
+            const commission = parseFloat(document.getElementById("commission").value) || 0;
+            const principalCommission = parseFloat(principalCommissionInput.value) || 0;
+        
+            // 创建报销项目对象
+            const expenseItem = {
+                region,
+                date,
+                storeName,
+                productName,
+                productId,
+                productImage,
+                orderId,
+                deliveryInfo,
+                payment,
+                commission,
+                principalCommission
+            };
+            
+            if (editingIndex >= 0) {
+                // 编辑现有项目
+                const oldItem = expenseItems[editingIndex];
+                
+                // 从店铺数据中减去旧项目金额
+                if (storeData[oldItem.storeName]) {
+                    storeData[oldItem.storeName].totalPrincipal -= oldItem.payment;
+                    storeData[oldItem.storeName].totalCommission -= oldItem.commission;
+                    
+                    // 如果店铺数据为0，删除该店铺
+                    if (storeData[oldItem.storeName].totalPrincipal === 0 && 
+                        storeData[oldItem.storeName].totalCommission === 0) {
+                        delete storeData[oldItem.storeName];
+                    }
+                }
+                
+                // 更新项目
+                expenseItems[editingIndex] = expenseItem;
+                editingIndex = -1;
+            } else {
+                // 添加新项目
+                expenseItems.push(expenseItem);
+            }
+            
+            // 更新表格显示
+            updateExpenseTable();
+            
+            // 更新店铺数据
+            if (!storeData[storeName]) {
+                storeData[storeName] = { totalPrincipal: 0, totalCommission: 0 };
+            }
+            storeData[storeName].totalPrincipal += payment;
+            storeData[storeName].totalCommission += commission;
+        
+            // 更新统计
+            updateSummary();
+            
+            // 保存最近使用的数据
+            saveRecentData('region', region);
+            saveRecentData('store', storeName);
+            
+            // 重置表单
+            expenseForm.reset();
+            setDefaultDate();
+            imagePreview.style.display = "none";
+        });
+        
+        // 更新报销表格
+        function updateExpenseTable() {
+            expenseTableBody.innerHTML = '';
+            
+            expenseItems.forEach((item, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.region}</td>
+                    <td>${item.date}</td>
+                    <td>${item.storeName}</td>
+                    <td style="font-size: 12px; color: #b0b0b0;">${item.productName}</td>
+                    <td style="font-size: 12px; color: #b0b0b0;">${item.productId}</td>
+                    <td><img src="${item.productImage}" alt="Product Image" width="50" height="50" style="max-width: 100px; max-height: 100px;" crossorigin="anonymous"></td>
+                    <td>${item.orderId}</td>
+                    <td style="font-size: 12px; color: #b0b0b0;">${item.deliveryInfo}</td>
+                    <td>${item.payment.toFixed(2)}</td>
+                    <td>${item.commission.toFixed(2)}</td>
+                    <td>${item.principalCommission.toFixed(2)}</td>
+                    <td>
+                        <button onclick="editExpenseItem(${index})">编辑</button>
+                        <button onclick="deleteExpenseItem(${index})">删除</button>
+                    </td>
+                `;
+                expenseTableBody.appendChild(row);
+            });
+        }
+        
+        // 编辑报销项目
+        function editExpenseItem(index) {
+            const item = expenseItems[index];
+            editingIndex = index;
+            
+            // 填充表单
+            document.getElementById("region").value = item.region;
+            document.getElementById("date").value = item.date;
+            document.getElementById("store-name").value = item.storeName;
+            document.getElementById("product-name").value = item.productName;
+            document.getElementById("product-id").value = item.productId;
+            document.getElementById("product-url").value = item.productImage;
+            document.getElementById("order-id").value = item.orderId;
+            document.getElementById("delivery-info").value = item.deliveryInfo;
+            document.getElementById("payment").value = item.payment;
+            document.getElementById("commission").value = item.commission;
+            
+            // 显示图片
+            imagePreview.src = item.productImage;
+            imagePreview.style.display = "block";
+            
+            // 清除文件输入
+            productImageInput.value = '';
+            
+            // 更新本金佣金
+            updatePrincipalCommission();
+        }
+        
+        // 删除报销项目
+        function deleteExpenseItem(index) {
+            if (confirm("确定要删除这个报销项目吗？")) {
+                const item = expenseItems[index];
+                
+                // 更新店铺数据
+                if (storeData[item.storeName]) {
+                    storeData[item.storeName].totalPrincipal -= item.payment;
+                    storeData[item.storeName].totalCommission -= item.commission;
+                    
+                    // 如果店铺数据为0，删除该店铺
+                    if (storeData[item.storeName].totalPrincipal === 0 && 
+                        storeData[item.storeName].totalCommission === 0) {
+                        delete storeData[item.storeName];
+                    }
+                }
+                
+                // 从数组中删除该项目
+                expenseItems.splice(index, 1);
+                
+                // 更新表格和统计
+                updateExpenseTable();
+                updateSummary();
+                
+                // 如果正在编辑的项目被删除，重置编辑状态
+                if (editingIndex === index) {
+                    editingIndex = -1;
+                    expenseForm.reset();
+                    setDefaultDate();
+                    imagePreview.style.display = "none";
+                }
+            }
+        }
+        
+        function updateSummary() {
+            let summaryText = '';
+            let totalAmount = 0;
+        
+            for (const storeName in storeData) {
+                const totalPrincipal = storeData[storeName].totalPrincipal.toFixed(2);
+                const totalCommission = storeData[storeName].totalCommission.toFixed(2);
+                const totalRefund = (parseFloat(totalPrincipal) + parseFloat(totalCommission)).toFixed(2);
+                const date = document.getElementById("date").value;
+                summaryText += `${storeName}，${date}，总本金${totalPrincipal}元，总佣金${totalCommission}元，总本佣合计：${totalRefund}元。<br>`;
+        
+                totalAmount += parseFloat(totalRefund);
+            }
+        
+            storeSummary.innerHTML = summaryText;
+        
+            // 更新订单明细列表标题
+            const date = document.getElementById("date").value;
+            const storeNamesJoined = Object.keys(storeData).join("、");
+            orderSummaryTitle.innerHTML = `订单列表明细<span style="font-size:16px;opacity:0.7;font-weight:300">（${date}【${storeNamesJoined}】补单明细报销凭证）</span>`;
+        
+            // 更新备注
+            updateRemark(date, Object.keys(storeData), totalAmount);
+        }
+        
+        function updateRemark(date, storeNames, totalAmount) {
+            const storeNamesJoined = storeNames.join("、");
+            const remark = `${date}【${storeNamesJoined}】本佣总合计：${totalAmount.toFixed(2)}元整`;
+            remarkText.innerHTML = remark;
+        }
+        
+        // 下载卡片功能
+        downloadCardButton.addEventListener("click", function() {
+            const generatedCard = document.getElementById("expense");
+            const date = document.getElementById("date").value || new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+            const storeNames = Object.keys(storeData).join("、") || "店铺名称";
+            const fileName = `${date}-${storeNames}-补单明细报销凭证.png`;
+        
+            const images = generatedCard.querySelectorAll("img");
+            const imagePromises = Array.from(images).map(img => {
+                return new Promise((resolve, reject) => {
+                    if (img.complete) {
+                        resolve();
+                    } else {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    }
+                    img.crossOrigin = "anonymous";
+                });
+            });
+        
+            Promise.all(imagePromises).then(() => {
+                html2canvas(generatedCard, {
+                    useCORS: true,
+                    allowTaint: true,
+                    width: 1660,
+                    windowWidth: 1660
+                }).then(canvas => {
+                    const link = document.createElement("a");
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = fileName;
+                    link.click();
+                });
+            }).catch(error => {
+                console.error("Error loading images: ", error);
+            });
+        });
+        
+        // 导出数据功能
+        exportDataButton.addEventListener("click", function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(expenseItems));
+            const date = new Date().toISOString().substr(0, 10);
+            const fileName = `报销数据_${date}.json`;
+            const link = document.createElement("a");
+            link.href = dataStr;
+            link.download = fileName;
+            link.click();
+        });
+        
+        // 导入数据功能
+        importDataButton.addEventListener("click", function() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "application/json";
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+                            expenseItems = importedData;
+                            
+                            // 重新计算店铺数据
+                            storeData = {};
+                            expenseItems.forEach(item => {
+                                if (!storeData[item.storeName]) {
+                                    storeData[item.storeName] = { totalPrincipal: 0, totalCommission: 0 };
+                                }
+                                storeData[item.storeName].totalPrincipal += item.payment;
+                                storeData[item.storeName].totalCommission += item.commission;
+                            });
+                            
+                            // 更新表格和统计
+                            updateExpenseTable();
+                            updateSummary();
+                            
+                            alert("数据导入成功！");
+                        } catch (error) {
+                            alert("导入失败：文件格式不正确");
+                            console.error(error);
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        });
+        
+        // ============ 任务发布功能 ============
+        let areaCount = 1;
+        
+        function previewImage(event, areaNumber) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('image-preview-' + areaNumber);
+                output.src = reader.result;
+                output.style.display = 'block';
+                
+                // 清除共享图片选择
+                document.getElementById('shared-product-image-' + areaNumber).value = '';
+                
+                // 保存图片到共享图片库
+                saveImageToLibrary(reader.result, "上传图片");
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        
+        function generateFields(areaNumber) {
+            const orderCount = document.getElementById('order-count-' + areaNumber).value;
+        
+            // Reset all groups
+            document.getElementById('keywords-group-' + areaNumber).innerHTML = '<label>每一单搜索的关键词：</label>';
+            document.getElementById('consultation-group-' + areaNumber).innerHTML = '<label>每一单需要咨询的问题：</label>';
+            document.getElementById('sku-name-group-' + areaNumber).innerHTML = '<label>每一单需要下单的SKU名称：</label>';
+            document.getElementById('sku-price-group-' + areaNumber).innerHTML = '<label>每一单SKU的单价：</label>';
+            document.getElementById('quantity-group-' + areaNumber).innerHTML = '<label>每一单需要拍多少件：</label>';
+            document.getElementById('payment-amount-group-' + areaNumber).innerHTML = '<label>每一单实际付款金额：</label>';
+            
+            // 删除之前可能存在的任务时间区域
+            const existingTaskTimeGroup = document.getElementById('task-time-group-' + areaNumber);
+            if (existingTaskTimeGroup) {
+                existingTaskTimeGroup.remove();
+            }
+        
+            // 添加新任务时间输入框
+            const taskTimeGroup = document.createElement('div');
+            taskTimeGroup.classList.add('form-group');
+            taskTimeGroup.id = 'task-time-group-' + areaNumber;
+            taskTimeGroup.innerHTML = '<label>每一单做任务时间：</label>';
+            document.getElementById('payment-amount-group-' + areaNumber).after(taskTimeGroup);
+        
+            // 获取常用数据
+            const keywords = JSON.parse(localStorage.getItem('task_keywords') || '[]');
+            const consultations = JSON.parse(localStorage.getItem('task_consultations') || '[]');
+            const skus = JSON.parse(localStorage.getItem('task_skus') || '[]');
+            const lastTaskTime = localStorage.getItem('lastTaskTime') || '';
+        
+            // Generate input fields for each order
+            for (let i = 1; i <= orderCount; i++) {
+                let keywordOptions = '';
+                keywords.forEach(keyword => {
+                    keywordOptions += `<option value="${keyword}">`;
+                });
+                
+                let consultationOptions = '';
+                consultations.forEach(consultation => {
+                    consultationOptions += `<option value="${consultation}">`;
+                });
+                
+                let skuOptions = '';
+                skus.forEach(sku => {
+                    skuOptions += `<option value="${sku}">`;
+                });
+                
+                document.getElementById('keywords-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单关键词：</label>
+                    <input type="text" name="keywords[]" placeholder="第${i}单关键词" list="keywords-list-${areaNumber}-${i}" required style="margin-bottom: 15px;">
+                    <datalist id="keywords-list-${areaNumber}-${i}">${keywordOptions}</datalist><br>
+                `;
+                document.getElementById('consultation-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单咨询问题：</label>
+                    <input type="text" name="consultation[]" placeholder="第${i}单咨询问题" list="consultation-list-${areaNumber}-${i}" required style="margin-bottom: 15px;">
+                    <datalist id="consultation-list-${areaNumber}-${i}">${consultationOptions}</datalist><br>
+                `;
+                document.getElementById('sku-name-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单SKU名称：</label>
+                    <input type="text" name="sku-name[]" placeholder="第${i}单SKU名称" list="sku-list-${areaNumber}-${i}" required style="margin-bottom: 15px;">
+                    <datalist id="sku-list-${areaNumber}-${i}">${skuOptions}</datalist><br>
+                `;
+                document.getElementById('sku-price-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单SKU单价：</label>
+                    <input type="number" name="sku-price[]" placeholder="第${i}单SKU单价" min="0" step="0.01" required style="margin-bottom: 15px;"><br>
+                `;
+                document.getElementById('quantity-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单拍多少件：</label>
+                    <input type="number" name="quantity[]" placeholder="第${i}单拍多少件" min="1" required style="margin-bottom: 15px;"><br>
+                `;
+                document.getElementById('payment-amount-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单实际付款金额：</label>
+                    <input type="number" name="payment-amount[]" placeholder="第${i}单实际付款金额" min="0" step="0.01" required style="margin-bottom: 15px;"><br>
+                `;
+
+                // 添加新任务时间输入框
+                document.getElementById('task-time-group-' + areaNumber).innerHTML += `
+                    <label>第${i}单任务时间：</label>
+                    <input type="text" name="task-time[]" placeholder="第${i}单任务时间" value="${lastTaskTime}" required style="margin-bottom: 15px;"><br>
+                `;
+            }
+        }
+        
+        function addPublishArea() {
+            areaCount++;
+            
+            const newArea = document.createElement('div');
+            newArea.classList.add('publish-area');
+            newArea.id = 'publish-area-' + areaCount;
+            
+            // 复制第一个发布区域的HTML结构
+            newArea.innerHTML = document.getElementById('publish-area-1').innerHTML;
+            
+            // 更新所有ID和名称
+            newArea.innerHTML = newArea.innerHTML.replace(/-1/g, '-' + areaCount);
+            
+            // 清空图片预览和选择
+            newArea.querySelector('.image-preview').style.display = 'none';
+            newArea.querySelector('.image-preview').src = '';
+            newArea.querySelector('input[type="file"]').value = '';
+            newArea.querySelector('select').value = '';
+            
+            const title = document.createElement('h2');
+            title.textContent = '任务' + areaCount;
+            title.style.color = '#333';
+            title.style.fontSize = '24px';
+            title.style.textAlign = 'center';
+            title.style.marginBottom = '20px';
+            
+            const hr = document.createElement('hr');
+            hr.style.border = '3px double #5e5e5e';
+            hr.style.margin = '60px 0';
+            
+            const container = document.getElementById('publish-areas-container');
+            container.appendChild(hr);
+            newArea.prepend(title);
+            container.appendChild(newArea);
+            
+            // 设置新区域的日期为当天
+            document.getElementById('release-date-' + areaCount).value = new Date().toISOString().substr(0, 10);
+            
+            // 更新新区域的共享图片下拉菜单
+            updateSharedImagesList();
+            
+            // 为新区域的"发布几单"输入框绑定事件
+            document.getElementById('order-count-' + areaCount).addEventListener('change', function() {
+                generateFields(areaCount);
+            });
+            
+            // 为新区域的图片上传和选择绑定事件
+            document.getElementById('product-image-' + areaCount).addEventListener('change', function(event) {
+                previewImage(event, areaCount);
+            });
+            
+            document.getElementById('shared-product-image-' + areaCount).addEventListener('change', function() {
+                selectSharedImage(this, areaCount);
+            });
+        }
+        
+        function removePublishArea() {
+            if (areaCount > 1) {
+                document.getElementById('publish-area-' + areaCount).remove();
+                const container = document.getElementById('publish-areas-container');
+                const hrElements = container.getElementsByTagName('hr');
+                if (hrElements.length > 0) {
+                    container.removeChild(hrElements[hrElements.length - 1]);
+                }
+                areaCount--;
+            }
+        }
+        
+        function submitAllForms() {
+            let content = '';
+            let promises = [];
+            let fileName = '';
+            
+            // 在最上方加上"本页一共发布了几个任务"字样
+            content += `
+                <div style="text-align: center; font-size: 30px; font-weight: bold; color: #652fff; margin-bottom: 20px;">
+                    本页一共发布了 ${areaCount} 个任务，请往下翻
+                </div>
+            `;
+        
+            for (let i = 1; i <= areaCount; i++) {
+                const formData = new FormData(document.getElementById('task-form-' + i));
+                
+                // 获取店铺名称和发布日期，用于生成文件名
+                const storeName = formData.get('store-name');
+                const releaseDate = formData.get('release-date');
+                if (i === 1) {
+                    fileName = `${storeName}_${releaseDate}.html`;
+                }
+                
+                // 获取图片文件
+                const productImageFile = document.getElementById('product-image-' + i).files[0];
+                let base64Image = '';
+                
+                // 保存最近使用的数据
+                saveRecentData('stores', storeName);
+                
+                // 保存任务时间
+                const taskTimes = formData.getAll('task-time[]');
+                if (taskTimes.length > 0) {
+                    localStorage.setItem('lastTaskTime', taskTimes[0]);
+                }
+                
+                // 如果有图片，加入Base64转换过程
+                if (productImageFile) {
+                    let promise = getBase64Image(productImageFile).then(base64 => {
+                        base64Image = base64;
+                    });
+                    promises.push(promise);
+                } else {
+                    // 使用共享图片
+                    base64Image = document.getElementById('image-preview-' + i).src;
+                }
+        
+                // 等待所有图片转换完成后再生成HTML内容
+                promises.push(new Promise(resolve => {
+                    Promise.all(promises).then(() => {
+                        content += `
+                            <html>
+                                <head>
+                                    <style>
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            font-size: 14px;
+                                            color: #333;
+                                        }
+                                        table {
+                                            width: 100%;
+                                            border-collapse: collapse;
+                                        }
+                                        th, td {
+                                            padding: 10px;
+                                            border: 1px solid #ccc;
+                                            text-align: left;
+                                        }
+                                        h1 {
+                                            color:#8063ff;
+                                        }
+                                        h2 {
+                                            color:#656565;
+                                        }
+                                        span {
+                                            color:#8063ff;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <h1><span>-------任务分割线-------（分割线以下是任务 ${i}）</span></h1>
+                                    <table>
+                                        <tr><th>发布日期</th><td>${formData.get('release-date')}</td></tr>
+                                        <tr><th>店铺名称</th><td>${formData.get('store-name')}</td></tr>
+                                        <tr><th>商品图片</th><td><img src="${base64Image}" style="max-width: 300px; max-height: 300px;"></td></tr>
+                                        <tr><th>发布几单</th><td>${formData.get('order-count')}</td></tr>
+                                        <tr><th>任务要求</th><td>${formData.get('task-requirements')}</td></tr>
+                                    </table>
+                                    <h2>每一单信息</h2>
+                                    <table>
+                                        <thead>
+                                            <tr><th>单序</th><th>关键词</th><th>咨询问题</th><th>SKU名称</th><th>单价</th><th>数量</th><th>实际付款金额</th><th>任务安排时间</th></tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+                        
+                        const orderCount = formData.get('order-count');
+                        for (let j = 1; j <= orderCount; j++) {
+                            content += `
+                                <tr>
+                                    <td>第${j}单</td>
+                                    <td>${formData.getAll('keywords[]')[j - 1]}</td>
+                                    <td>${formData.getAll('consultation[]')[j - 1]}</td>
+                                    <td>${formData.getAll('sku-name[]')[j - 1]}</td>
+                                    <td>${formData.getAll('sku-price[]')[j - 1]}</td>
+                                    <td>${formData.getAll('quantity[]')[j - 1]}</td>
+                                    <td>${formData.getAll('payment-amount[]')[j - 1]}</td>
+                                    <td>${formData.getAll('task-time[]')[j - 1]}</td>
+                                </tr>
+                            `;
+                            
+                            // 保存关键词、咨询问题和SKU名称到常用数据
+                            saveRecentData('task_keyword', formData.getAll('keywords[]')[j - 1]);
+                            saveRecentData('task_consultation', formData.getAll('consultation[]')[j - 1]);
+                            saveRecentData('task_sku', formData.getAll('sku-name[]')[j - 1]);
+                        }
+        
+                        content += `
+                            </tbody>
+                            </table>
+                        </body>
+                            </html>
+                        `;
+                        resolve();
+                    });
+                }));
+            }
+        
+            // 生成文件并下载
+            Promise.all(promises).then(() => {
+                const blob = new Blob([content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        // Helper function to convert image to Base64 string
+        function getBase64Image(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    resolve(reader.result);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // ============ 基础数据管理功能 ============
+        let editingProduct = null;
+        
+        function loadAllData() {
+            // 加载地区数据
+            const regions = JSON.parse(localStorage.getItem('regions') || '[]');
+            const regionListContainer = document.getElementById('region-list-container');
+            regionListContainer.innerHTML = '';
+            regions.forEach(region => {
+                if (region && region.trim() !== '') {
+                    regionListContainer.innerHTML += `
+                        <div class="data-item">
+                            ${region}
+                            <button onclick="removeData('regions', '${region}')">删除</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 加载店铺数据
+            const stores = JSON.parse(localStorage.getItem('stores') || '[]');
+            const storeListContainer = document.getElementById('store-list-container');
+            storeListContainer.innerHTML = '';
+            stores.forEach(store => {
+                if (store && store.trim() !== '') {
+                    storeListContainer.innerHTML += `
+                        <div class="data-item">
+                            ${store}
+                            <button onclick="removeData('stores', '${store}')">删除</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 加载产品数据
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const productListContainer = document.getElementById('product-list-container');
+            const productSelect = document.getElementById('product-name');
+            
+            productListContainer.innerHTML = '';
+            productSelect.innerHTML = '<option value="">请选择产品</option>';
+            
+            products.forEach(product => {
+                if (product && product.name && product.name.trim() !== '' && product.id && product.id.trim() !== '') {
+                    productListContainer.innerHTML += `
+                        <div class="data-item">
+                            <div><strong>${product.name}</strong></div>
+                            <div>ID: ${product.id || ''}</div>
+                            ${product.url ? `<div><img src="${product.url}" alt="产品图片" style="max-width:100px; max-height:100px;"></div>` : ''}
+                            <div style="margin-top: 5px;">
+                                <button onclick="editProduct('${product.name}', '${product.id || ''}', '${product.url || ''}')">编辑</button>
+                                <button onclick="removeProduct('${product.name}')">删除</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const option = document.createElement('option');
+                    option.value = product.name;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                }
+            });
+            
+            // 加载任务关键词数据
+            const taskKeywords = JSON.parse(localStorage.getItem('task_keywords') || '[]');
+            const keywordListContainer = document.getElementById('keyword-list-container');
+            keywordListContainer.innerHTML = '';
+            taskKeywords.forEach(keyword => {
+                if (keyword && keyword.trim() !== '') {
+                    keywordListContainer.innerHTML += `
+                        <div class="data-item">
+                            ${keyword}
+                            <button onclick="removeData('task_keywords', '${keyword}')">删除</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 加载咨询问题数据
+            const taskConsultations = JSON.parse(localStorage.getItem('task_consultations') || '[]');
+            const consultationListContainer = document.getElementById('consultation-list-container');
+            consultationListContainer.innerHTML = '';
+            taskConsultations.forEach(consultation => {
+                if (consultation && consultation.trim() !== '') {
+                    consultationListContainer.innerHTML += `
+                        <div class="data-item">
+                            ${consultation}
+                            <button onclick="removeData('task_consultations', '${consultation}')">删除</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 加载SKU名称数据
+            const taskSkus = JSON.parse(localStorage.getItem('task_skus') || '[]');
+            const skuListContainer = document.getElementById('sku-list-container');
+            skuListContainer.innerHTML = '';
+            taskSkus.forEach(sku => {
+                if (sku && sku.trim() !== '') {
+                    skuListContainer.innerHTML += `
+                        <div class="data-item">
+                            ${sku}
+                            <button onclick="removeData('task_skus', '${sku}')">删除</button>
+                        </div>
+                    `;
+                }
+            });
+            
+            // 加载共享图片数据
+            updateSharedImagesList();
+        }
+        
+        function updateDataLists() {
+            // 更新地区datalist
+            const regions = JSON.parse(localStorage.getItem('regions') || '[]');
+            const regionList = document.getElementById('region-list');
+            regionList.innerHTML = '';
+            regions.forEach(region => {
+                if (region && region.trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = region;
+                    regionList.appendChild(option);
+                }
+            });
+            
+            // 更新店铺datalist
+            const stores = JSON.parse(localStorage.getItem('stores') || '[]');
+            const storeList = document.getElementById('store-list');
+            storeList.innerHTML = '';
+            stores.forEach(store => {
+                if (store && store.trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = store;
+                    storeList.appendChild(option);
+                }
+            });
+            
+            // 更新任务店铺datalist - 修复：使用stores数据而不是task_stores
+            const storeListTask = document.getElementById('store-list-task');
+            storeListTask.innerHTML = '';
+            stores.forEach(store => {
+                if (store && store.trim() !== '') {
+                    const option = document.createElement('option');
+                    option.value = store;
+                    storeListTask.appendChild(option);
+                }
+            });
+        }
+        
+        function addRegion() {
+            const newRegion = document.getElementById('new-region').value.trim();
+            if (newRegion) {
+                const regions = JSON.parse(localStorage.getItem('regions') || '[]');
+                if (!regions.includes(newRegion)) {
+                    regions.push(newRegion);
+                    localStorage.setItem('regions', JSON.stringify(regions));
+                    loadAllData();
+                    updateDataLists();
+                    document.getElementById('new-region').value = '';
+                }
+            }
+        }
+        
+        function addStore() {
+            const newStore = document.getElementById('new-store').value.trim();
+            if (newStore) {
+                const stores = JSON.parse(localStorage.getItem('stores') || '[]');
+                if (!stores.includes(newStore)) {
+                    stores.push(newStore);
+                    localStorage.setItem('stores', JSON.stringify(stores));
+                    loadAllData();
+                    updateDataLists();
+                    document.getElementById('new-store').value = '';
+                }
+            }
+        }
+        
+        function addProduct() {
+            const name = document.getElementById('new-product-name').value.trim();
+            const id = document.getElementById('new-product-id').value.trim();
+            const url = document.getElementById('new-product-url').value.trim();
+            
+            if (!name) {
+                alert('产品名称不能为空！');
+                return;
+            }
+            
+            if (!id) {
+                alert('产品ID不能为空！');
+                return;
+            }
+            
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            
+            if (editingProduct) {
+                // 编辑现有产品
+                const index = products.findIndex(p => p.name === editingProduct);
+                if (index !== -1) {
+                    products[index] = { name, id, url };
+                }
+                editingProduct = null;
+                document.getElementById('cancel-edit-product').style.display = 'none';
+            } else {
+                // 添加新产品
+                // 检查是否已存在同名产品
+                const existingIndex = products.findIndex(p => p.name === name);
+                if (existingIndex !== -1) {
+                    if (!confirm('已存在同名产品，是否覆盖？')) return;
+                    products[existingIndex] = { name, id, url };
+                } else {
+                    products.push({ name, id, url });
+                }
+            }
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            loadAllData();
+            document.getElementById('new-product-name').value = '';
+            document.getElementById('new-product-id').value = '';
+            document.getElementById('new-product-url').value = '';
+            
+            // 如果提供了URL，保存到共享图片库
+            if (url) {
+                saveImageToLibrary(url, name);
+            }
+        }
+        
+        function editProduct(name, id, url) {
+            document.getElementById('new-product-name').value = name;
+            document.getElementById('new-product-id').value = id;
+            document.getElementById('new-product-url').value = url;
+            editingProduct = name;
+            document.getElementById('cancel-edit-product').style.display = 'inline-block';
+            document.getElementById('new-product-name').focus();
+        }
+        
+        function cancelEditProduct() {
+            document.getElementById('new-product-name').value = '';
+            document.getElementById('new-product-id').value = '';
+            document.getElementById('new-product-url').value = '';
+            editingProduct = null;
+            document.getElementById('cancel-edit-product').style.display = 'none';
+        }
+        
+        function removeProduct(name) {
+            if (confirm(`确定要删除产品"${name}"吗？`)) {
+                const products = JSON.parse(localStorage.getItem('products') || '[]');
+                const index = products.findIndex(p => p.name === name);
+                if (index !== -1) {
+                    products.splice(index, 1);
+                    localStorage.setItem('products', JSON.stringify(products));
+                    loadAllData();
+                }
+            }
+        }
+        
+        function addKeyword() {
+            const newKeyword = document.getElementById('new-keyword').value.trim();
+            if (newKeyword) {
+                const keywords = JSON.parse(localStorage.getItem('task_keywords') || '[]');
+                if (!keywords.includes(newKeyword)) {
+                    keywords.push(newKeyword);
+                    localStorage.setItem('task_keywords', JSON.stringify(keywords));
+                    loadAllData();
+                    document.getElementById('new-keyword').value = '';
+                }
+            }
+        }
+        
+        function addConsultation() {
+            const newConsultation = document.getElementById('new-consultation').value.trim();
+            if (newConsultation) {
+                const consultations = JSON.parse(localStorage.getItem('task_consultations') || '[]');
+                if (!consultations.includes(newConsultation)) {
+                    consultations.push(newConsultation);
+                    localStorage.setItem('task_consultations', JSON.stringify(consultations));
+                    loadAllData();
+                    document.getElementById('new-consultation').value = '';
+                }
+            }
+        }
+        
+        function addSku() {
+            const newSku = document.getElementById('new-sku').value.trim();
+            if (newSku) {
+                const skus = JSON.parse(localStorage.getItem('task_skus') || '[]');
+                if (!skus.includes(newSku)) {
+                    skus.push(newSku);
+                    localStorage.setItem('task_skus', JSON.stringify(skus));
+                    loadAllData();
+                    document.getElementById('new-sku').value = '';
+                }
+            }
+        }
+        
+        function removeData(type, value) {
+            if (confirm(`确定要删除"${value}"吗？`)) {
+                let data = JSON.parse(localStorage.getItem(type) || '[]');
+                const index = data.indexOf(value);
+                if (index !== -1) {
+                    data.splice(index, 1);
+                    localStorage.setItem(type, JSON.stringify(data));
+                    loadAllData();
+                    updateDataLists();
+                }
+            }
+        }
+        
+        function saveRecentData(type, value) {
+            if (!value) return;
+            
+            let data = JSON.parse(localStorage.getItem(type) || '[]');
+            if (!data.includes(value)) {
+                data.push(value);
+                localStorage.setItem(type, JSON.stringify(data));
+                
+                // 如果是任务相关数据，更新任务发布的数据列表
+                if (type.startsWith('task_')) {
+                    loadAllData();
+                } else {
+                    updateDataLists();
+                }
+            }
+        }
+        
+        // 导出所有数据
+        function exportAllData() {
+            const allData = {
+                regions: JSON.parse(localStorage.getItem('regions') || '[]'),
+                stores: JSON.parse(localStorage.getItem('stores') || '[]'),
+                products: JSON.parse(localStorage.getItem('products') || '[]'),
+                task_keywords: JSON.parse(localStorage.getItem('task_keywords') || '[]'),
+                task_consultations: JSON.parse(localStorage.getItem('task_consultations') || '[]'),
+                task_skus: JSON.parse(localStorage.getItem('task_skus') || '[]'),
+                sharedImages: JSON.parse(localStorage.getItem('sharedImages') || '[]')
+            };
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "blueflag_data_export.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+        
+        // 导入所有数据
+        function importAllData() {
+            if (confirm('导入数据将覆盖当前所有数据，确定要继续吗？')) {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'application/json';
+                input.onchange = function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            try {
+                                const importedData = JSON.parse(e.target.result);
+                                
+                                if (importedData.regions) localStorage.setItem('regions', JSON.stringify(importedData.regions));
+                                if (importedData.stores) localStorage.setItem('stores', JSON.stringify(importedData.stores));
+                                if (importedData.products) localStorage.setItem('products', JSON.stringify(importedData.products));
+                                if (importedData.task_keywords) localStorage.setItem('task_keywords', JSON.stringify(importedData.task_keywords));
+                                if (importedData.task_consultations) localStorage.setItem('task_consultations', JSON.stringify(importedData.task_consultations));
+                                if (importedData.task_skus) localStorage.setItem('task_skus', JSON.stringify(importedData.task_skus));
+                                if (importedData.sharedImages) localStorage.setItem('sharedImages', JSON.stringify(importedData.sharedImages));
+                                
+                                loadAllData();
+                                updateDataLists();
+                                updateSharedImagesList();
+                                alert('数据导入成功！');
+                            } catch (error) {
+                                alert('数据导入失败：文件格式不正确');
+                                console.error(error);
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                input.click();
+            }
+        }
+    </script>
+</body>
+</html>
