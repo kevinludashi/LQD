@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蓝旗单任务发布报销综合系统 v1</title>
+    <title>蓝旗单任务发布报销综合系统 v2</title>
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -247,8 +247,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>蓝旗单任务发布报销综合系统 v1</h1>
-            <p>综合管理系统 - 版本 v1.250909.01 </p>
+            <h1>蓝旗单任务发布报销综合系统 v2</h1>
+            <p>综合管理系统 - 版本 v2.251016.01 </p>
         </header>
         
         <div class="tabs">
@@ -399,12 +399,12 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="product-image-1">商品图片上传：</label>
-                                    <input type="file" id="product-image-1" name="product-image" accept="image/*" onchange="previewImage(event, 1)">
+                                    <input type="file" id="product-image-1" name="product-image" accept="image/*">
                                     <img id="image-preview-1" class="image-preview" src="" alt="商品图片预览" style="display:none;">
                                 </div>
                                 <div class="form-group">
                                     <label for="shared-product-image-1">或选择已上传的图片：</label>
-                                    <select id="shared-product-image-1" name="shared-product-image" onchange="selectSharedImage(this, 1)">
+                                    <select id="shared-product-image-1" name="shared-product-image">
                                         <option value="">请选择图片</option>
                                     </select>
                                 </div>
@@ -412,7 +412,7 @@
                             
                             <div class="form-group">
                                 <label for="order-count-1">发布几单：</label>
-                                <input type="number" id="order-count-1" name="order-count" min="1" max="100" required onchange="generateFields(1)">
+                                <input type="number" id="order-count-1" name="order-count" min="1" max="100" required>
                             </div>
                             
                             <div class="form-group" id="keywords-group-1">
@@ -668,6 +668,9 @@
             loadAllData();
             updateDataLists();
             updateSharedImagesList();
+            
+            // 绑定第一个任务区域的事件
+            bindTaskAreaEvents(1);
         };
         
         // ============ 报销单功能 ============
@@ -1117,6 +1120,31 @@
         // ============ 任务发布功能 ============
         let areaCount = 1;
         
+        // 绑定任务区域事件
+        function bindTaskAreaEvents(areaNumber) {
+            const imageInput = document.getElementById(`product-image-${areaNumber}`);
+            const sharedImageSelect = document.getElementById(`shared-product-image-${areaNumber}`);
+            const orderCountInput = document.getElementById(`order-count-${areaNumber}`);
+            
+            if (imageInput) {
+                imageInput.addEventListener('change', function(event) {
+                    previewImage(event, areaNumber);
+                });
+            }
+            
+            if (sharedImageSelect) {
+                sharedImageSelect.addEventListener('change', function() {
+                    selectSharedImage(this, areaNumber);
+                });
+            }
+            
+            if (orderCountInput) {
+                orderCountInput.addEventListener('change', function() {
+                    generateFields(areaNumber);
+                });
+            }
+        }
+        
         function previewImage(event, areaNumber) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -1136,7 +1164,7 @@
         function generateFields(areaNumber) {
             const orderCount = document.getElementById('order-count-' + areaNumber).value;
         
-            // Reset all groups
+            // Reset all groups for this specific area only
             document.getElementById('keywords-group-' + areaNumber).innerHTML = '<label>每一单搜索的关键词：</label>';
             document.getElementById('consultation-group-' + areaNumber).innerHTML = '<label>每一单需要咨询的问题：</label>';
             document.getElementById('sku-name-group-' + areaNumber).innerHTML = '<label>每一单需要下单的SKU名称：</label>';
@@ -1257,19 +1285,8 @@
             // 更新新区域的共享图片下拉菜单
             updateSharedImagesList();
             
-            // 为新区域的"发布几单"输入框绑定事件
-            document.getElementById('order-count-' + areaCount).addEventListener('change', function() {
-                generateFields(areaCount);
-            });
-            
-            // 为新区域的图片上传和选择绑定事件
-            document.getElementById('product-image-' + areaCount).addEventListener('change', function(event) {
-                previewImage(event, areaCount);
-            });
-            
-            document.getElementById('shared-product-image-' + areaCount).addEventListener('change', function() {
-                selectSharedImage(this, areaCount);
-            });
+            // 绑定新区域的事件
+            bindTaskAreaEvents(areaCount);
         }
         
         function removePublishArea() {
